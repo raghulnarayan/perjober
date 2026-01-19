@@ -1,0 +1,13 @@
+# MongoDB database files
+data/
+*.wt
+WiredTiger*
+journal/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+
+# Env
+.env
