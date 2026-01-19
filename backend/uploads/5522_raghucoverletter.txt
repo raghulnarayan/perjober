@@ -1,0 +1,27 @@
+﻿From,
+
+Raghu Lakshmi Narayan
+📞 +91-6363323836 | ✉ raghunarayan28@gmail.com | Bangalore | india
+
+Linkedin | https://github.com/raghulnarayan
+[Date]
+
+Hiring Manager
+[company name]
+
+Dear Hiring Manager,
+
+I am writing to express my interest in the Python Developer position at [Company Name]. With a Master’s in Computer Applications from Bangalore University and hands-on experience in backend development, API design, and data-driven projects, I am eager to contribute my skills in Python, Django, Flask, and SQL to your team.
+
+During my internship at Techciti Technologies, I developed and optimized RESTful APIs capable of processing over 5,000 reviews per minute, reducing data processing time by 25% and improving response times by 40%. My work on fake review detection achieved 92% accuracy, showcasing my ability to apply analytical thinking and technical skills to solve real-world problems.
+
+I further enhanced my data handling expertise through a Gen AI Job Simulation at Forage, where I extracted insights from financial reports using Python and pandas, created interactive data visualizations, and built a chatbot capable of addressing over 100 financial queries. These experiences strengthened my ability to combine backend development with data science principles to deliver meaningful, user-focused solutions.
+
+Beyond my technical expertise, I bring strong collaboration, critical thinking, and time management skills. My academic and professional journey reflects a consistent commitment to learning and adapting—qualities I believe align well with the innovative environment at [Company Name].
+
+I am enthusiastic about the opportunity to apply my skills to real-world challenges and contribute to building scalable, efficient, and impactful software solutions. I would welcome the chance to discuss how my background can add value to your team.
+
+Thank you for considering my application. I look forward to the opportunity to speak with you.
+
+Sincerely,
+Raghu Lakshmi Narayan

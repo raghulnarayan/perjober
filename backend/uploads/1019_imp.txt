@@ -1,0 +1,8 @@
+RAG and GraphRAG
+5-6 prompt engg techniques
+Context Engg vs Prompt Engg
+Training model vs Fine-tuning model and how we do it.
+Handling security using Gardrails, and how it works.
+Different chunking strategies.
+FastAPI- should know development of API
+Aware of NoSql and RDBMS

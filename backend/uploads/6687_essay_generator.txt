@@ -1,0 +1,89 @@
+import os
+from dotenv import load_dotenv
+from langchain_google_genai import ChatGoogleGenerativeAI
+
+# Load API key from .env
+load_dotenv()
+api_key = os.getenv("GOOGLE_API_KEY")
+
+# Initialize Gemini model
+llm_gemini = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.7)
+
+
+# --- 1. CONFIGURATION ---
+
+# Load API keys from .env
+load_dotenv()
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    print("Error: GOOGLE_API_KEY not found in environment variables.")
+    print("Please create a .env file and add GOOGLE_API_KEY='your_key_here'")
+    exit()
+
+# Essay topic
+essay_topic = "The Impact of Renewable Energy on the Global Economy"
+
+# Prompt template (forces paragraph format)
+prompt_template = PromptTemplate.from_template(
+    "Write a coherent essay of around 200 words on the following topic: {topic}. "
+    "Do not list sources, write full paragraphs."
+)
+
+# --- 2. HELPER FUNCTION TO GET A VALID GEMINI MODEL ---
+def get_valid_gemini_model():
+    try:
+        models = list_models()
+        print("Available models:", models)
+        # Pick the first supported model for generateContent
+        for m in models:
+            if "gemini" in m.lower():
+                return m
+        return None
+    except Exception as e:
+        print("Could not fetch models:", e)
+        return None
+
+# --- 3. MODEL 1: GOOGLE GEMINI ---
+def get_gemini_chain():
+    model_name = "gemini-1.5-preview"  # This is a valid Gemini model
+    print(f"Initializing Google Gemini model: {model_name}")
+    llm_gemini = ChatGoogleGenerativeAI(model=model_name, temperature=0.7)
+    return prompt_template | llm_gemini | StrOutputParser()
+
+
+# --- 4. MODEL 2: LOCAL GPT-2 ---
+def get_local_gpt2_chain():
+    print("Initializing local GPT-2 model (CPU)... This may take a while the first time.")
+    llm_local = HuggingFacePipeline.from_model_id(
+        model_id="gpt2",
+        task="text-generation",
+        pipeline_kwargs={"max_new_tokens": 300, "pad_token_id": 50256},
+    )
+    return prompt_template | llm_local | StrOutputParser()
+
+# --- 5. MAIN EXECUTION ---
+if __name__ == "__main__":
+    print(f"Starting essay generation for topic: '{essay_topic}'\n")
+
+    # --- Gemini (cloud) ---
+    try:
+        gemini_chain = get_gemini_chain()
+        if gemini_chain:
+            print("\n--- [Generating with Google Gemini] ---")
+            gemini_result = gemini_chain.invoke({"topic": essay_topic})
+            print(gemini_result)
+            print("-------------------------------------------\n")
+    except Exception as e:
+        print(f"An error occurred with the Gemini model: {e}")
+
+    # --- Local GPT-2 ---
+    try:
+        local_chain = get_local_gpt2_chain()
+        print("--- [Generating with Local GPT-2] ---")
+        local_result = local_chain.invoke({"topic": essay_topic})
+        cleaned_result = local_result.split(f"topic: {essay_topic}")[-1].strip()
+        print(cleaned_result)
+        print("-----------------------------------------\n")
+    except Exception as e:
+        print(f"An error occurred with the local GPT-2 model: {e}")

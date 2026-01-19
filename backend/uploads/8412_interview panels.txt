@@ -1,0 +1,23 @@
+1. Why do you want to work for this company?
+
+I am particularly excited about joining Neo Interaction Design because of your strong focus on creating user-centered digital solutions. From my experience, I’ve seen how thoughtful design and well-structured backend systems work hand-in-hand to deliver impactful products. Your company’s reputation for blending innovation with practical usability aligns perfectly with my passion for building scalable backend systems and APIs that enhance the user experience. I believe working here will allow me to apply my skills in Python, Django, and API design to contribute to meaningful projects, while also growing under a team that values creativity, collaboration, and cutting-edge design.
+
+2. What skills do you possess that are relevant to the position you are applying for?
+
+I bring a strong foundation in Python development and backend systems, with hands-on experience in:
+
+Backend Development: Built RESTful APIs with Flask and Django capable of processing over 5,000 reviews per minute.
+
+Database Management: Optimized SQL queries and joins, improving API response times by 40% and ensuring scalability.
+
+Problem-Solving & Analytics: Achieved 92% accuracy in fake review detection by improving data pipelines and logic.
+
+Tools & Collaboration: Proficient with Git, GitHub, Postman, and VS Code, and experienced in agile teamwork.
+
+Frontend Knowledge: Basic experience in HTML, CSS, JavaScript, and React, which helps me collaborate effectively with frontend teams.
+
+These skills are directly relevant to delivering efficient, reliable, and user-friendly software solutions at Neo Interaction Design.
+
+3. Tell me about a challenge or conflict you overcame at previous work?
+
+During my internship at Techciti Technologies, we faced a challenge with API performance—response times were slow when processing a high volume of reviews, and the system began to lag with concurrent requests. This created frustration within the team since project deadlines were tight. I took the initiative to analyze the database queries and noticed that multiple unnecessary joins and large payloads were slowing the system down. I restructured the queries, reduced payload sizes, and optimized indexing strategies. These changes reduced API response times by 40% and allowed the system to handle 30% more concurrent requests without performance issues. This experience taught me the importance of staying calm under pressure, breaking down complex problems into smaller parts, and communicating solutions effectively to my team.

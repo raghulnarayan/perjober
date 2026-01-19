@@ -1,0 +1,3 @@
+
+frontend:  PS C:\perjober\frontend-react> npm run dev
+backend: python -m uvicorn backend.main:app --host 127.0.0.1 --port 8001

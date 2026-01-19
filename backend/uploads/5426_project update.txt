@@ -1,0 +1,9 @@
+on refresh it should not go to login it should remain in the same page
+when selected to completed it must show 100 as default
+add link in attach files as OR 
+add one and more files and links upto 7
+add percentages in pie charts
+set goal and target for a certain topic which is done and what is to be done  
+embbed an actual calendar to job tracker calender
+in login page the password press enter is overlapping(fix)
+show main project title card in top header of the project
