@@ -15,7 +15,7 @@ const Signup = () => {
     data.append('password', formData.password);
 
     try {
-      await axios.post('http://127.0.0.1:8001/signup-trigger', data);
+      await axios.post('https://perjober-api.onrender.com/signup-trigger', data);
       localStorage.setItem('temp_email', formData.email);
       navigate('/otp');
     } catch (err) { alert('Error: User likely already exists'); }

@@ -19,7 +19,7 @@ except ImportError:
 # ==========================================
 # ⚙️ CONFIGURATION & CONSTANTS
 # ==========================================
-BACKEND_URL = "http://127.0.0.1:8001"
+BACKEND_URL = "https://perjober-api.onrender.com/"
 
 st.set_page_config(
     page_title="Mission Masters", 

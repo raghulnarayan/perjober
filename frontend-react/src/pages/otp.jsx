@@ -14,7 +14,7 @@ const OTP = () => {
     data.append('email', email);
     data.append('otp', otp);
     try {
-      await axios.post('http://127.0.0.1:8001/verify-signup', data);
+      await axios.post('https://perjober-api.onrender.com/verify-signup', data);
       localStorage.setItem('user', email);
       navigate('/home');
     } catch (err) { alert('Invalid Code'); }

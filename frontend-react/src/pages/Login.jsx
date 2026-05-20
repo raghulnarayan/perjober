@@ -15,7 +15,7 @@ const Login = () => {
     formData.append('email', email);
     formData.append('password', password);
     try {
-      const res = await axios.post('http://127.0.0.1:8001/login', formData);
+      const res = await axios.post('https://perjober-api.onrender.com/login', formData);
       if (res.status === 200) {
         localStorage.setItem('user', email);
         navigate('/home');

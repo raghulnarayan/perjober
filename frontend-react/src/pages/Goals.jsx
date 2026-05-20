@@ -36,7 +36,7 @@ const Goals = () => {
 
   const updateBackend = async (newGoals) => {
     setTopic({ ...topic, goals: newGoals }); // Optimistic UI update
-    await axios.put(`http://127.0.0.1:8001/study/${topic._id}/goals`, { goals: newGoals });
+    await axios.put(`https://perjober-api.onrender.com/study/${topic._id}/goals`, { goals: newGoals });
   };
 
   // Split goals into two lists

@@ -211,7 +211,7 @@ const Home = () => {
 
   const fetchUserName = async () => {
     try {
-        const res = await axios.get(`http://127.0.0.1:8001/get-user-name/${userEmail}`);
+        const res = await axios.get(`https://perjober-api.onrender.com/get-user-name/${userEmail}`);
         if (res.data.name) setUserName(res.data.name);
     } catch (e) { console.log("Could not fetch name"); }
   };
@@ -236,9 +236,9 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const sRes = await axios.get(`http://127.0.0.1:8001/study/${userEmail}`);
+      const sRes = await axios.get(`https://perjober-api.onrender.com/study/${userEmail}`);
       setStudyData(sRes.data);
-      const jRes = await axios.get(`http://127.0.0.1:8001/jobs/${userEmail}`);
+      const jRes = await axios.get(`https://perjober-api.onrender.com/jobs/${userEmail}`);
       setJobs(jRes.data);
     } catch (err) { console.error(err); }
   };
@@ -443,7 +443,7 @@ const Home = () => {
     formData.append('progress', newProgress);
     if (actualEndDate !== null) formData.append('actual_end_date', actualEndDate);
 
-    await axios.put(`http://127.0.0.1:8001/study/${id}`, formData);
+    await axios.put(`https://perjober-api.onrender.com/study/${id}`, formData);
   };
 
   const handleFileSelect = (e, isEditMode = false) => {
@@ -482,7 +482,7 @@ const Home = () => {
 
     setNewTopic({ topic: '', subject: '', status: 'to-do', progress: 0, links: '', target_date: '' }); 
     setNewFiles([]);
-    await axios.post('http://127.0.0.1:8001/study', formData);
+    await axios.post('https://perjober-api.onrender.com/', formData);
     fetchData(); 
   };
 
@@ -510,7 +510,7 @@ const Home = () => {
 
       const formData = new FormData();
       formData.append('links', newLinks.join('\n')); 
-      await axios.put(`http://127.0.0.1:8001/study/${itemId}`, formData);
+      await axios.put(`https://perjober-api.onrender.com/${itemId}`, formData);
 
       setTempLinkName('');
       setTempLinkUrl('');
@@ -529,20 +529,20 @@ const Home = () => {
 
       const formData = new FormData();
       formData.append('links', newLinks.join('\n')); 
-      await axios.put(`http://127.0.0.1:8001/study/${itemId}`, formData);
+      await axios.put(`https://perjober-api.onrender.com/study/${itemId}`, formData);
   };
 
   const uploadFilesOnly = async (id) => {
       const formData = new FormData();
       editFiles.forEach(file => formData.append('files', file));
-      await axios.put(`http://127.0.0.1:8001/study/${id}`, formData);
+      await axios.put(`https://perjober-api.onrender.com/study/${id}`, formData);
       setEditFiles([]);
       fetchData(); 
   };
 
   const deleteTopic = async (id) => {
     setStudyData(studyData.filter(item => item._id !== id));
-    await axios.delete(`http://127.0.0.1:8001/study/${id}`);
+    await axios.delete(`https://perjober-api.onrender.com/study/${id}`);
   };
 
   const goToGoals = (topicData) => navigate('/goals', { state: { topicData } });
@@ -555,7 +555,7 @@ const Home = () => {
     const formData = new FormData();
     formData.append('user_email', userEmail);
     Object.keys(newJob).forEach(k => formData.append(k, newJob[k]));
-    await axios.post('http://127.0.0.1:8001/jobs', formData);
+    await axios.post('https://perjober-api.onrender.com/jobs', formData);
     fetchData(); 
   };
 
@@ -569,12 +569,12 @@ const Home = () => {
     formData.append('role', job.role);
     formData.append('status', newStatus);
     formData.append('date', job.date);
-    await axios.put(`http://127.0.0.1:8001/jobs/${id}`, formData);
+    await axios.put(`https://perjober-api.onrender.com/jobs/${id}`, formData);
   };
 
   const deleteJob = async (id) => {
       setJobs(jobs.filter(j => j._id !== id));
-      await axios.delete(`http://127.0.0.1:8001/jobs/${id}`);
+      await axios.delete(`https://perjober-api.onrender.com/jobs/${id}`);
   };
 
   const getJobsByStatus = (status) => jobs.filter(j => j.status === status);
@@ -799,7 +799,7 @@ const Home = () => {
                                 <div style={{background: 'rgba(0,0,0,0.2)', padding:'15px', borderRadius:'10px'}}>
                                     <h4 style={{margin:'0 0 15px 0', color:'#bf953f', display:'flex', alignItems:'center', gap:'10px'}}><ListAltIcon /> Attached Files</h4>
                                     <div style={{marginBottom:'15px', display:'flex', flexDirection:'column', gap:'5px'}}>
-                                        {item.files && item.files.length > 0 ? (item.files.map((f, i) => (<div key={i} style={{display:'flex', justifyContent:'space-between', background:'rgba(255,255,255,0.05)', padding:'5px 10px', borderRadius:'5px'}}><span style={{fontSize:'0.9em', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:'200px'}}>{f.split('_').slice(1).join('_')}</span><a href={`http://127.0.0.1:8001/view/${f}`} target="_blank" style={{color:'#4fc3f7', textDecoration:'none', fontSize:'0.8em', fontWeight:'bold'}}>OPEN</a></div>))) : <span style={{color:'#666', fontSize:'0.9em'}}>No files attached.</span>}
+                                        {item.files && item.files.length > 0 ? (item.files.map((f, i) => (<div key={i} style={{display:'flex', justifyContent:'space-between', background:'rgba(255,255,255,0.05)', padding:'5px 10px', borderRadius:'5px'}}><span style={{fontSize:'0.9em', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', maxWidth:'200px'}}>{f.split('_').slice(1).join('_')}</span><a href={`https://perjober-api.onrender.com/view/${f}`} target="_blank" style={{color:'#4fc3f7', textDecoration:'none', fontSize:'0.8em', fontWeight:'bold'}}>OPEN</a></div>))) : <span style={{color:'#666', fontSize:'0.9em'}}>No files attached.</span>}
                                     </div>
                                     <div style={{display:'flex', gap:'10px', alignItems:'center'}}>
                                         <Button component="label" size="small" variant="outlined" startIcon={<CloudUploadIcon />} sx={{color:'#bf953f', borderColor:'#bf953f'}}>Select Files <input type="file" hidden multiple onChange={(e) => handleFileSelect(e, true)} /></Button>

@@ -16,7 +16,7 @@ const ForgotPassword = () => {
       const formData = new FormData();
       formData.append('email', email);
       
-      await axios.post('http://127.0.0.1:8001/forgot-password-trigger', formData);
+      await axios.post('https://perjober-api.onrender.com/forgot-password-trigger', formData);
       setStage(2);
     } catch (e) { 
       console.error(e);
@@ -31,7 +31,7 @@ const ForgotPassword = () => {
       formData.append('otp', otp);
       formData.append('new_password', newPass);
 
-      await axios.post('http://127.0.0.1:8001/reset-password', formData);
+      await axios.post('https://perjober-api.onrender.com/reset-password', formData);
       
       // --- CHANGED THIS PART ---
       alert('Password Reset Success! Logging you in...');

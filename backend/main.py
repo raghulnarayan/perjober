@@ -51,10 +51,10 @@ conf = ConnectionConfig(
     MAIL_USERNAME=os.getenv("SENDER_EMAIL"),
     MAIL_PASSWORD=os.getenv("SENDER_PASSWORD"),
     MAIL_FROM=os.getenv("SENDER_EMAIL"),
-    MAIL_PORT=587,
+    MAIL_PORT=465,              # <--- CHANGED FROM 587 TO 465
     MAIL_SERVER="smtp.gmail.com",
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
+    MAIL_STARTTLS=False,        # <--- CHANGED FROM True TO False
+    MAIL_SSL_TLS=True,          # <--- CHANGED FROM False TO True
     USE_CREDENTIALS=True
 )
 

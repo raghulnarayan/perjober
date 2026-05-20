@@ -4,7 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 # --- CONFIG ---
 MONGO_URI = "mongodb://localhost:27017"
 DB_NAME = "protracker"
-EMAIL = "raghunarayan28@gmail.com"
+EMAIL = "missionmasters.app@gmail.com"
 
 async def reset_user():
     client = AsyncIOMotorClient(MONGO_URI)
