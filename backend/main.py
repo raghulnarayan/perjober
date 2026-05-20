@@ -4,7 +4,7 @@ import asyncio
 import random
 import string
 import shutil
-import os
+import requests  # <--- Used to send mail via HTTP API
 from dotenv import load_dotenv
 from datetime import datetime
 from typing import List
@@ -14,31 +14,26 @@ load_dotenv()
 from fastapi import FastAPI, HTTPException, Form, UploadFile, File, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
 from bson import ObjectId
 
 # === IMPORT DATABASE ===
-# Ensure backend/database.py exists and exports users_col, study_col, jobs_col
 from database import users_col, study_col, jobs_col
 
-# === WINDOWS ASYNC FIX ===
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 app = FastAPI()
 
-# === CORS MIDDLEWARE ===
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all connections (Frontend)
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# === UTILS & CONFIG ===
 def get_password_hash(password):
-    return password  # Plain text for simplicity as requested
+    return password
 
 def verify_password(plain_password, hashed_password):
     return plain_password == hashed_password
@@ -46,19 +41,28 @@ def verify_password(plain_password, hashed_password):
 UPLOAD_DIR = "backend/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# Email Config (Replace with your own if needed)
-conf = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("SENDER_EMAIL"),
-    MAIL_PASSWORD=os.getenv("SENDER_PASSWORD"),
-    MAIL_FROM=os.getenv("SENDER_EMAIL"),
-    MAIL_PORT=465,              # <--- CHANGED FROM 587 TO 465
-    MAIL_SERVER="smtp.gmail.com",
-    MAIL_STARTTLS=False,        # <--- CHANGED FROM True TO False
-    MAIL_SSL_TLS=True,          # <--- CHANGED FROM False TO True
-    USE_CREDENTIALS=True
-)
-
 otp_store = {}
+
+# === HELPER FUNCTION FOR BREVO ===
+def send_brevo_email(to_email, subject, text_content):
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": os.getenv("BREVO_API_KEY"),
+        "content-type": "application/json"
+    }
+    payload = {
+        "sender": {"name": "Mission Masters", "email": "missionmasters.app@gmail.com"},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "textContent": text_content
+    }
+    try:
+        response = requests.post(url, json=payload, headers=headers)
+        if response.status_code != 201:
+            print(f"Brevo failed status {response.status_code}: {response.text}")
+    except Exception as e:
+        print(f"Brevo connection error: {e}")
 
 @app.get("/")
 def home():
@@ -79,13 +83,7 @@ async def signup_trigger(background_tasks: BackgroundTasks, name: str = Form(...
     
     print(f"\n🔑 SIGNUP OTP FOR {email}: {otp}") 
     
-    try:
-        message = MessageSchema(subject="ProTracker Code", recipients=[email], body=f"Code: {otp}", subtype=MessageType.plain)
-        fm = FastMail(conf)
-        background_tasks.add_task(fm.send_message, message)
-    except:
-        print("Email failed to send, check console for OTP.")
-        
+    background_tasks.add_task(send_brevo_email, email, "ProTracker Code", f"Your signup code is: {otp}")
     return {"message": "OTP Generated"}
 
 @app.post("/verify-signup")
@@ -115,11 +113,7 @@ async def forgot_password_trigger(background_tasks: BackgroundTasks, email: str 
     otp_store[email] = {"otp": otp, "type": "reset"}
     print(f"\n🔑 RESET OTP FOR {email}: {otp}")
 
-    try:
-        message = MessageSchema(subject="Reset Password", recipients=[email], body=f"Reset Code: {otp}", subtype=MessageType.plain)
-        fm = FastMail(conf)
-        background_tasks.add_task(fm.send_message, message)
-    except: pass
+    background_tasks.add_task(send_brevo_email, email, "Reset Password", f"Your reset code is: {otp}")
     return {"message": "OTP sent"}
 
 @app.post("/reset-password")
@@ -134,14 +128,13 @@ async def reset_password(email: str = Form(...), otp: str = Form(...), new_passw
 
 @app.get("/get-user-name/{email}")
 async def get_user_name(email: str):
-    # Fixed: using 'users_col'
     user = await users_col.find_one({"email": email})
     if user:
         return {"name": user.get("name", "User")}
     return {"name": "User"}
 
 # ===========================
-# 📚 STUDY ROUTES (CORRECTED)
+# 📚 STUDY ROUTES
 # ===========================
 
 @app.post("/study")
@@ -152,7 +145,7 @@ async def add_study(
     status: str = Form(...), 
     progress: int = Form(...), 
     start_date: str = Form(...),
-    target_date: str = Form(None),  # <--- NEW: Accept Target Date
+    target_date: str = Form(None),
     links: str = Form(""), 
     files: List[UploadFile] = File(None)
 ):
@@ -174,8 +167,8 @@ async def add_study(
         "status": status, 
         "progress": progress, 
         "start_date": start_date,
-        "target_date": target_date, # <--- NEW: Save it to DB
-        "actual_end_date": None,    # <--- NEW: Initialize as Empty
+        "target_date": target_date,
+        "actual_end_date": None,
         "files": saved_files, 
         "links": link_list, 
         "history": history, 
@@ -195,7 +188,7 @@ async def update_study(
     status: str = Form(None), 
     progress: int = Form(None), 
     links: str = Form(None),
-    actual_end_date: str = Form(None), # <--- NEW: Accept Completion Date
+    actual_end_date: str = Form(None),
     files: List[UploadFile] = File(None)
 ):
     update_data = {}
@@ -203,13 +196,11 @@ async def update_study(
     
     if progress is not None: 
         update_data["progress"] = progress
-        # Add to history
         await study_col.update_one(
             {"_id": ObjectId(id)}, 
             {"$push": {"history": {"date": datetime.now().strftime("%Y-%m-%d"), "progress": progress}}}
         )
 
-    # <--- NEW: Save Actual End Date if provided --->
     if actual_end_date:
         update_data["actual_end_date"] = actual_end_date
     
@@ -237,7 +228,6 @@ async def delete_study(id: str):
 
 @app.put("/study/{id}/goals")
 async def update_goals(id: str, payload: dict):
-    # Payload expected: {"goals": [...]}
     await study_col.update_one({"_id": ObjectId(id)}, {"$set": {"goals": payload["goals"]}})
     return {"message": "Goals updated"}
 
