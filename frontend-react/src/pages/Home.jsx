@@ -344,7 +344,7 @@ const Home = () => {
 
   const JOB_COLORS = {
       'Applied': '#bf953f',
-      'Interviewing': '#2196f3',
+      'scheduled': '#2196f3',
       'Offer': '#4caf50',
       'Rejected': '#f44336'
   };
@@ -818,8 +818,10 @@ const Home = () => {
 
         {/* ... (TAB 2: VISUAL PROGRESS) ... */}
         {tabIndex === 1 && (
-          // ⚡ FIXED HEIGHT 400px FOR BAR CHART ⚡
-          <Box sx={{ mt: 4, height: 900 }}>
+          // ⚡ CONTAINER: 85vh = Huge Vertical Space (No Limit feel). Overflow visible prevents clipping. ⚡
+          <Box sx={{ mt: 4, height: '85vh', minHeight: '700px', width: '100%', overflow: 'visible', display: 'flex', flexDirection: 'column' }}>
+            
+            {/* Multi-Select Dropdown for Bar Chart */}
             {chartType === 'Bar' && (
                 <div style={{marginBottom:'20px', display:'flex', justifyContent:'center'}}>
                     <FormControl sx={{ m: 1, width: 400, maxWidth:'90%' }}>
@@ -828,6 +830,8 @@ const Home = () => {
                     </FormControl>
                 </div>
             )}
+            
+            {/* Chart Type Selector */}
             <div style={{marginBottom: '20px', textAlign:'center'}}>
                 <select className="dark-input fixed-select" style={{width: '200px'}} onChange={(e) => setChartType(e.target.value)}>
                     <option value="Bar">Bar Chart</option>
@@ -836,16 +840,17 @@ const Home = () => {
                 </select>
             </div>
             
-            {/* ⚡ UNIFIED MARGINS & WHITE TOOLTIPS ⚡ */}
-            <ResponsiveContainer width="100%" height="50%">
+            {/* ⚡ RESPONSIVE CONTAINER: Height/Width 100% fills the huge Box. Overflow visible stops clipping. ⚡ */}
+            <ResponsiveContainer width="100%" height="100%" style={{ overflow: 'visible' }}>
+              
+              {/* --- BAR CHART --- */}
               {chartType === 'Bar' && (
                 <BarChart data={getFilteredChartData()} margin={{ top: 20, right: 30, left: 40, bottom: 5 }}>
                   <XAxis dataKey="topic" tick={chartAxisStyle} stroke="white" />
-                  {/* ⚡ FIX 1: Added width={50} to force labels inside ⚡ */}
                   <YAxis tick={chartAxisStyle} stroke="white" domain={[0, 100]} width={50} /> 
-                  {/* ⚡ FIX 2: Tooltip background white, text black ⚡ */}
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', border:'1px solid #bf953f', color:'black', borderRadius:'5px' }} cursor={{fill: 'rgba(255,255,255,0.1)'}}/>
-                  <Bar dataKey="progress" maxBarSize={120}>
+                  {/* Fixed barSize prevents ugly stretching in large view */}
+                  <Bar dataKey="progress" maxBarSize={60}>
                     {getFilteredChartData().map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={brightColors[index % brightColors.length]} />
                     ))}
@@ -853,12 +858,11 @@ const Home = () => {
                 </BarChart>
               )}
               
+              {/* --- LINE CHART (History) --- */}
               {chartType === 'History' && (
                 <LineChart data={getHistoryChartData()} margin={{ top: 20, right: 30, left: 40, bottom: 5 }}>
                   <XAxis dataKey="date" stroke="white" tick={chartAxisStyle} tickMargin={10} />
-                  {/* ⚡ FIX 1: Added width={50} ⚡ */}
                   <YAxis stroke="white" domain={[0, 100]} tick={chartAxisStyle} width={50} />
-                  {/* ⚡ FIX 2: Tooltip background white, text black ⚡ */}
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', border: '1px solid #bf953f', borderRadius: '5px' }} itemStyle={{ color: 'black', fontSize:'14px' }} labelStyle={{ color: '#bf953f', fontWeight: 'bold', marginBottom:'5px' }} />
                   <Legend onClick={handleLegendClick} cursor="pointer" wrapperStyle={{ paddingTop: '20px' }} formatter={(value) => <span style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold', marginRight: '15px', opacity: soloTopic && soloTopic !== value ? 0.2 : 1, transition: 'opacity 0.3s', cursor: 'pointer' }}>{value}</span>} />
                   {studyData.map((topic, index) => (
@@ -867,17 +871,38 @@ const Home = () => {
                 </LineChart>
               )}
               
+              {/* --- PIE CHART (Fixed Alignment) --- */}
               {chartType === 'Pie' && (
-                // ⚡ FIX 1: Balanced margins for Pie chart centering ⚡
-                <PieChart margin={{ top: 20, right: 20, left: 20, bottom: 5 }}>
-                  <Pie data={studyData} dataKey="progress" nameKey="topic" cx="50%" cy="50%" labelLine={false} label={renderCustomizedLabel} outerRadius="90%" fill="#8884d8">
+                <PieChart 
+                  // ⚡ Allow overflow so huge pie fits ⚡
+                  style={{ overflow: 'visible' }}
+                  // ⚡ Margins to center it and give room for legend at bottom ⚡
+                  margin={{ top: 50, right: 50, left: 50, bottom: 100 }}
+                >
+                  <Pie 
+                    data={studyData} 
+                    dataKey="progress" 
+                    nameKey="topic" 
+                    cx="50%" 
+                    cy="50%" 
+                    labelLine={false} 
+                    label={renderCustomizedLabel} 
+                    // ⚡ HUGE RADIUS: 130% fills the screen nicely ⚡
+                    outerRadius="125%"  
+                    fill="#8884d8"
+                  >
                     {studyData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={brightColors[index % brightColors.length]} />
                     ))}
                   </Pie>
-                  {/* ⚡ FIX 2: Tooltip background white, text black ⚡ */}
+                  
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(255,255,255,0.95)', border:'1px solid #bf953f', color: 'black', borderRadius:'5px' }} />
-                  <Legend formatter={(value) => <span style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold' }}>{value}</span>} />
+                  
+                  {/* ⚡ Pushed Legend WAY down (120px) so it never touches the pie ⚡ */}
+                  <Legend 
+                    wrapperStyle={{ paddingTop: '120px' }} 
+                    formatter={(value) => <span style={{ color: '#fff', fontSize: '15px', fontWeight: 'bold' }}>{value}</span>} 
+                  />
                 </PieChart>
               )}
             </ResponsiveContainer>
@@ -892,7 +917,7 @@ const Home = () => {
               <input placeholder="Role" className="dark-input" value={newJob.role} onChange={(e) => setNewJob({...newJob, role: e.target.value})} />
               <select className="dark-input fixed-select" value={newJob.status} onChange={(e) => setNewJob({...newJob, status: e.target.value})}>
                   <option value="Applied">Applied</option>
-                  <option value="Interviewing">Interviewing</option>
+                  <option value="scheduled">schdueled</option>
                   <option value="Offer">Offer</option>
                   <option value="Rejected">Rejected</option>
               </select>
@@ -901,17 +926,17 @@ const Home = () => {
             </div>
             
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '15px' }}>
-                {['Applied', 'Interviewing', 'Offer', 'Rejected'].map(status => (
+                {['Applied', 'scheduled', 'Offer', 'Rejected'].map(status => (
                     <div key={status} style={{ background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '10px' }}>
-                        <h4 style={{textAlign:'center', borderBottom: `2px solid ${status==='Offer'?'#4caf50':status==='Rejected'?'#f44336':status==='Interviewing'?'#2196f3':'#bf953f'}`}}>{status}</h4>
+                        <h4 style={{textAlign:'center', borderBottom: `2px solid ${status==='Offer'?'#4caf50':status==='Rejected'?'#f44336':status==='scheduled'?'#2196f3':'#bf953f'}`}}>{status}</h4>
                         {getJobsByStatus(status).map(job => (
                             <div key={job._id} style={{ padding: '10px', background: 'rgba(0,0,0,0.3)', marginBottom: '5px', borderRadius: '5px', position:'relative' }}>
                                 <strong>{job.company}</strong><br/>
                                 <small>{job.role}</small><br/>
                                 <small style={{color:'#aaa'}}>{formatDate(job.date)}</small>
                                 
-                                {status === 'Applied' && (<select className="dark-input fixed-select" style={{marginTop:'5px', padding:'5px', fontSize:'0.8em', width:'100%', border:'1px solid #555'}} value={job.status} onChange={(e) => updateJobStatus(job._id, e.target.value)}><option value="Applied" disabled>Applied</option><option value="Interviewing">Interviewing</option><option value="Rejected">Rejected</option></select>)}
-                                {status === 'Interviewing' && (<select className="dark-input fixed-select" style={{marginTop:'5px', padding:'5px', fontSize:'0.8em', width:'100%', border:'1px solid #555'}} value={job.status} onChange={(e) => updateJobStatus(job._id, e.target.value)}><option value="Interviewing" disabled>Interviewing</option><option value="Offer">Offer</option><option value="Rejected">Rejected</option></select>)}
+                                {status === 'Applied' && (<select className="dark-input fixed-select" style={{marginTop:'5px', padding:'5px', fontSize:'0.8em', width:'100%', border:'1px solid #555'}} value={job.status} onChange={(e) => updateJobStatus(job._id, e.target.value)}><option value="Applied" disabled>Applied</option><option value="scheduled">scheduled</option><option value="Rejected">Rejected</option></select>)}
+                                {status === 'scheduled' && (<select className="dark-input fixed-select" style={{marginTop:'5px', padding:'5px', fontSize:'0.8em', width:'100%', border:'1px solid #555'}} value={job.status} onChange={(e) => updateJobStatus(job._id, e.target.value)}><option value="scheduled" disabled>scheduled</option><option value="Offer">Offer</option><option value="Rejected">Rejected</option></select>)}
 
                                 <div style={{position:'absolute', top: 5, right: 5}}><DeleteIcon fontSize="small" style={{cursor:'pointer', color:'#f44336'}} onClick={() => deleteJob(job._id)} /></div>
                             </div>
@@ -992,12 +1017,6 @@ const Home = () => {
                 )}
             </Box>
         )}
-      </div>
-
-      <div style={{textAlign: 'center', marginTop: '50px', color: '#666', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px'}}>
-        <p style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'}}>
-            <EmailIcon fontSize="small" /> Service Support: <strong>support@studyjobtracker.com</strong>
-        </p>
       </div>
 
       <Dialog open={showLimitWarning} onClose={() => setShowLimitWarning(false)} PaperProps={{ style: { backgroundColor: '#1e1e1e', border: '1px solid #bf953f', color: 'white' } }}>

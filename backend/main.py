@@ -4,8 +4,12 @@ import asyncio
 import random
 import string
 import shutil
+import os
+from dotenv import load_dotenv
 from datetime import datetime
 from typing import List
+
+load_dotenv()
 
 from fastapi import FastAPI, HTTPException, Form, UploadFile, File, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -44,9 +48,9 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # Email Config (Replace with your own if needed)
 conf = ConnectionConfig(
-    MAIL_USERNAME="raghunarayan28@gmail.com",
-    MAIL_PASSWORD="cchg ilwv udhd fcaj", 
-    MAIL_FROM="raghunarayan28@gmail.com",
+    MAIL_USERNAME=os.getenv("SENDER_EMAIL"),
+    MAIL_PASSWORD=os.getenv("SENDER_PASSWORD"),
+    MAIL_FROM=os.getenv("SENDER_EMAIL"),
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,
