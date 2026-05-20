@@ -19,7 +19,7 @@ from bson import ObjectId
 
 # === IMPORT DATABASE ===
 # Ensure backend/database.py exists and exports users_col, study_col, jobs_col
-from .database import users_col, study_col, jobs_col
+from database import users_col, study_col, jobs_col
 
 # === WINDOWS ASYNC FIX ===
 if sys.platform == 'win32':
