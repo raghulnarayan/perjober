@@ -3,7 +3,7 @@ import VideoBackground from './components/VideoBackground';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
-import OTP from './pages/OTP';
+import OTP from './pages/otp';
 import Home from './pages/Home';
 import Goals from './pages/Goals';
 import SplashScreen from './pages/SplashScreen'; // Import the new page
