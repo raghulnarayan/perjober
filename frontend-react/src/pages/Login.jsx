@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import TitleCard from '../components/TitleCard';
-// --- ADD THESE TWO LINES ---
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig'; 
-// ---------------------------
+import { auth } from '../firebaseConfig'; // Correctly importing from the config file
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevents the form from refreshing the page
+    e.preventDefault();
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/dashboard'); // Assuming you want to redirect after success
+      navigate('/dashboard');
     } catch (error) {
       setLoading(false);
       alert("Error logging in: " + error.message);
