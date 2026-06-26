@@ -8,20 +8,19 @@ const Login = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
-    try {
-      const res = await axios.post('https://perjober-api.onrender.com/login', formData);
-      if (res.status === 200) {
-        localStorage.setItem('user', email);
-        navigate('/home');
-      }
-    } catch (err) { setError('Invalid Credentials'); }
-  };
+  
+  const handleLogin = async () => {
+  setLoading(true); // <--- Add this
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    // ... your existing success redirect code
+  } catch (error) {
+    setLoading(false); // <--- Add this so the button works again if there's an error
+    alert("Error logging in: " + error.message);
+  }
+};
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
@@ -32,7 +31,13 @@ const Login = () => {
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
           <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required style={inputStyle} />
           <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required style={inputStyle} />
-          <button type="submit" style={buttonStyle}>ENTER SYSTEM</button>
+          <button 
+  onClick={handleLogin} 
+  disabled={loading} // This stops the user from clicking it twice while it's "thinking"
+  className="your-current-css-classes"
+>
+  {loading ? "Entering System..." : "Enter System"}
+</button>
         </form>
         <div style={{ marginTop: '15px', display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
           <Link to="/forgot-password" style={{ color: '#ccc' }}>Forgot Password?</Link>
