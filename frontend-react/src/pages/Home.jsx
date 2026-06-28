@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import Calendar from 'react-calendar'; 
 import 'react-calendar/dist/Calendar.css'; 
+import { auth } from '../firebaseConfig';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import TitleCard from '../components/TitleCard';
 import { Tabs, Tab, Box, Button, IconButton, Slider, Chip, Dialog, DialogTitle, DialogContent, DialogActions, Select, MenuItem, Checkbox, ListItemText, FormControl, InputLabel, OutlinedInput, Grid, Card, CardContent, Typography, Menu } from '@mui/material';
 
@@ -134,7 +136,8 @@ const MOTIVATIONAL_QUOTES = [
 
 const Home = () => {
   const navigate = useNavigate();
-  const userEmail = localStorage.getItem('user'); 
+  const [userEmail, setUserEmail] = useState(null);
+  const [isVerifying, setIsVerifying] = useState(true);
   const [userName, setUserName] = useState('User'); 
   const [welcomeMsg, setWelcomeMsg] = useState('Welcome'); 
    
@@ -185,16 +188,28 @@ const Home = () => {
 
   const brightColors = ['#bf953f', '#00e5ff', '#ff4081', '#76ff03', '#ea80fc', '#ffea00', '#FF5722', '#1E88E5', '#D500F9', '#00C853']; 
 
-  useEffect(() => {
-    if (!userEmail) {
-        navigate('/login');
+  // NEW BLOCK 1: The Firebase Listener (Stops the Flash)
+useEffect(() => {
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setUserEmail(user.email); // Grab email from Firebase securely
+      setIsVerifying(false);    // Turn off the loading screen
     } else {
-        fetchData();
-        fetchUserName();
-        handleWelcomeMessage();
-        generateRandomQuote(); 
+      navigate('/login');       // Kick out if not authenticated
     }
-  }, [userEmail]);
+  });
+  return () => unsubscribe();
+}, [navigate]);
+
+// NEW BLOCK 2: Fetch data only after Firebase confirms the user
+useEffect(() => {
+  if (userEmail) {
+      fetchData();
+      fetchUserName();
+      handleWelcomeMessage();
+      generateRandomQuote();
+  }
+}, [userEmail]);
 
   useEffect(() => {
       if (studyData.length > 0 && compareList.length === 0) {
@@ -601,8 +616,18 @@ const Home = () => {
     setAnchorEl(null);
   };
 
+  if (isVerifying) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#bf953f' }}>
+        <h2>Verifying Secure Connection...</h2>
+      </div>
+    );
+  }
+  // -------------------------------------
+
   return (
     <div style={{ padding: '20px', minHeight: '100vh', paddingBottom: '100px' }}>
+      <TitleCard />
       <TitleCard />
       <div className="glass-card" style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         
@@ -613,7 +638,7 @@ const Home = () => {
               <h3 style={{ textTransform: 'capitalize', margin: 0 }}>
                  {welcomeMsg}, <span style={{color: '#bf953f'}}>{userName}</span>
               </h3>
-              <Button variant="outlined" color="error" onClick={() => { localStorage.removeItem('user'); navigate('/login'); }}>Logout</Button>
+              <Button variant="outlined" color="error" onClick={() => { signOut(auth).then(() => navigate('/login')); }}>Logout</Button>
           </div>
 
           <div className="quote-container">
