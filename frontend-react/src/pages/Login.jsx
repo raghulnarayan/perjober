@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import TitleCard from '../components/TitleCard';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '/src/firebaseConfig';// Matches the filename 'firebase.js' // Correctly importing from the config file
+import { auth } from '../firebaseConfig';// Matches the filename 'firebase.js' // Correctly importing from the config file
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');s
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
