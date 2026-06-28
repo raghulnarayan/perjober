@@ -15,7 +15,7 @@ const Login = () => {
     setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate('/dashboard');
+      navigate('/home');
     } catch (error) {
       setLoading(false);
       alert("Error logging in: " + error.message);

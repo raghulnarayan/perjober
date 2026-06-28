@@ -20,7 +20,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/otp" element={<OTP />} />
-        <Route path="/home" element={<Home />} />
+        <Route path="/dashboard" element={<Home />} />
         <Route path="/goals" element={<Goals />} />
       </Routes>
     </BrowserRouter>
