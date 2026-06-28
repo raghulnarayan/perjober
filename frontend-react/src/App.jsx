@@ -13,16 +13,17 @@ function App() {
     <BrowserRouter>
       <VideoBackground />
       <Routes>
-        {/* CHANGED: Root path now points to SplashScreen instead of Redirect */}
-        <Route path="/" element={<SplashScreen />} />
-        
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/otp" element={<OTP />} />
-        <Route path="/dashboard" element={<Home />} />
-        <Route path="/goals" element={<Goals />} />
-      </Routes>
+  <Route path="/" element={<SplashScreen />} />
+  <Route path="/login" element={<Login />} />
+  <Route path="/signup" element={<Signup />} />
+  <Route path="/forgot-password" element={<ForgotPassword />} />
+  <Route path="/otp" element={<OTP />} />
+  
+  {/* THIS LINE MUST EXIST EXACTLY LIKE THIS */}
+  <Route path="/home" element={<Home />} /> 
+  
+  <Route path="/goals" element={<Goals />} />
+</Routes>
     </BrowserRouter>
   );
 }
